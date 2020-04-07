@@ -42,6 +42,7 @@ namespace ClashConfigADD
             }
         }
     }
+    //TODO: 核心部分未写
     class Config
     {
         public int port { get; set; }
