@@ -5,10 +5,14 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ClashConfigADD"
         mc:Ignorable="d"
-        Title="MainWindow" Height="450" Width="800">
+        Title="MainWindow" Height="473" Width="901">
     <Grid>
-        <Button Content="加载配置文件" HorizontalAlignment="Left" Margin="60,95,0,0" VerticalAlignment="Top" Width="81" Height="30"/>
-        <Button Content="重载配置" HorizontalAlignment="Left" Margin="60,181,0,0" VerticalAlignment="Top" Width="81" RenderTransformOrigin="-0.08,0.474" Height="24"/>
+        <Button Content="加载配置文件" HorizontalAlignment="Left" Margin="60,95,0,0" VerticalAlignment="Top" Width="81" Height="30" Click="Button_Click"/>
+        <Button Content="重载配置" HorizontalAlignment="Left" Margin="60,181,0,0" VerticalAlignment="Top" Width="81" Height="30" RenderTransformOrigin="-0.08,0.474" />
+        <ComboBox HorizontalAlignment="Left" Margin="227,61,0,0" VerticalAlignment="Top" Width="120"/>
+        <ComboBox HorizontalAlignment="Left" Margin="571,61,0,0" VerticalAlignment="Top" Width="120"/>
+        <TextBox HorizontalAlignment="Left" Height="23" Margin="413,61,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
+        <Button Content="Button" HorizontalAlignment="Left" Margin="754,65,0,0" VerticalAlignment="Top" Width="75"/>
 
     </Grid>
 </Window>
