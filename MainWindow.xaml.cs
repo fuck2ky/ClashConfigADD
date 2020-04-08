@@ -1,20 +1,9 @@
 ﻿using Microsoft.Win32;
-using System;
+using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
-using System.Windows.Data;
-using System.Windows.Documents;
-using System.Windows.Input;
-using System.Windows.Media;
-using System.Windows.Media.Imaging;
-using System.Windows.Navigation;
-using System.Windows.Shapes;
-using YamlDotNet.Serialization;
 
 namespace ClashConfigADD
 {
@@ -23,10 +12,54 @@ namespace ClashConfigADD
     /// </summary>
     public partial class MainWindow : Window
     {
-        public static String filename;
+        public static string filename;
+        private static Config YamlConfig;
+        private static SerializeObject yaml;
+        struct Rule_Struct
+        {
+            public string method { get; set; }
+            public string target { get; set; }
+            public string rule { get; set; }
+            public Rule_Struct(string v1,string v2,string v3):this()
+            {
+                this.method = v1;
+                this.target = v2;
+                this.rule=v3;
+            }
+        }
         public MainWindow()
         {
             InitializeComponent();
+            try
+            {
+                filename = Directory.GetCurrentDirectory() + @"\config.yaml";
+                if (File.Exists(filename))
+                {
+                    yaml = new SerializeObject();
+                    yaml.setFilePath(filename.Replace("\\", "/"));
+                    YamlConfig = yaml.Deserializer<Config>();
+                    if (YamlConfig != null)
+                    {
+                        foreach (GROUP G in YamlConfig.ProxyGroup)
+                        {
+                            rulebox.Items.Add(G.name);
+                        }
+                        foreach(string r in YamlConfig.Rule)
+                        {
+                            string[] z = r.Split(',');
+                            if (z.Length >= 3)
+                            {
+                                RuleList.Items.Add(new Rule_Struct(z[0], z[1], z[2]));
+                            }
+                            else
+                            {
+                                RuleList.Items.Add(new Rule_Struct(z[0], "剩余目标地址", z[1]));
+                            }
+                        }
+                    }
+                }
+            }
+            catch { }
         }
 
         private void Button_Click(object sender, RoutedEventArgs e)
@@ -38,116 +71,73 @@ namespace ClashConfigADD
             if (dialog.ShowDialog() == true)
             {
                 filename = dialog.FileName;
-                Console.WriteLine(filename);
+                loadConfig();
             }
         }
-    }
-    //TODO: 核心部分未写
-    class Config
-    {
-        public int port { get; set; }
-        [YamlMember(Alias = "socks-port", ApplyNamingConventions = false)]
-        public int SocksPort { get; set; }
-        [YamlMember(Alias = "allow-lan", ApplyNamingConventions = false)]
-        public Boolean allowLan { get; set; }
-        public string mode { get; set; }
-        [YamlMember(Alias = "log-level", ApplyNamingConventions = false)]
-        public string logLevel { get; set; }
-        [YamlMember(Alias = "external-controller", ApplyNamingConventions = false)]
-        public string controller { get; set; }
-        [YamlMember(Alias = "external-ui", ApplyNamingConventions = false)]
-        public string ui { get; set; }
-        public DNS dns { get; set; }
-        [YamlMember(Alias = "cfw-bypass", ApplyNamingConventions = false)]
-        public List<string> cfwbypass { get; set; }
-        [YamlMember(Alias = "cfw-latency-timeout", ApplyNamingConventions = false)]
-        public int cfwlatencytimeout { get; set; }
-        [YamlMember(Alias = "cfw-latency-url", ApplyNamingConventions = false)]
-        public string cfwlatencyurl { get; set; }
-        [YamlMember(Alias = "cfw-conn-break-strategy", ApplyNamingConventions = false)]
-        public Strategy cfwstrategy { get; set; }
-        [YamlMember(Alias = "cfw-child-process", ApplyNamingConventions = false)]
-        public List<string> cfwprocess { get; set; }
-        public List<PROXY> Proxy { get; set; }
-        [YamlMember(Alias = "Proxy Group", ApplyNamingConventions = false)]
-        public List<GROUP> ProxyGroup { get; set; }
-        public List<string> Rule { get; set; }
-
-    }
-    class DNS
-    {
-        public bool enable { get; set; }
-        public string listen { get; set; }
-        [YamlMember(Alias = "enhanced-mode", ApplyNamingConventions = false)]
-        public string enhancedMode { get; set; }
-        public List<string> nameserver { get; set; }
-    }
-    class Strategy
-    {
-        public string proxy { get; set; }
-        public bool profile { get; set; }
-        public bool mode { get; set; }
-    }
-    class PROXY
-    {
-        public string name { get; set; }
-        public string type { get; set; }
-        public string server { get; set; }
-        public int port { get; set; }
-        public string cipher { get; set; }
-        public string password { get; set; }
-        public bool udp { set; get; }
-        public string uuid { get; set; }
-        public int alterId { get; set; }
-        public bool tls { get; set; }
-        public string network { get; set; }
-        [YamlMember(Alias = "ws-path", ApplyNamingConventions = false)]
-        public string wspath { get; set; }
-        [YamlMember(Alias = "ws-headers", ApplyNamingConventions = false)]
-        public headers wsheaders { get; set; }
-        [YamlMember(Alias = "skip-cert-verify", ApplyNamingConventions = false)]
-        public bool skipcert { get; set; }
-    }
-    class headers
-    {
-        public string Host { get; set; }
-    }
-    class GROUP
-    {
-        public string name { get; set; }
-        public string type { get; set; }
-        public List<String> proxies { get; set; }
-        public string url { get; set; }
-        public int interval { get; set; }
-    }
-    //读写Yaml文件类
-    class SerializeObject
-    {
-        static String _filepath = "C:\\Users\\Georg\\Desktop\\1.yaml";
-        static public void setFilePath(String Filepath)
+        public void loadConfig()
         {
-            _filepath = Filepath;
-        }
-        // 追加写入Yaml文件
-        static public void Serializer<T>(T obj)
-        {
-            StreamWriter yamlWriter = File.AppendText(_filepath);
-            Serializer yamlserialzer = new Serializer();
-            yamlserialzer.Serialize(yamlWriter, obj);
-            yamlWriter.Close();
-        }
-        // 读取Yaml文件
-        static public T Deserializer<T>()
-        {
-            if (!File.Exists(_filepath))
+            yaml = new SerializeObject();
+            yaml.setFilePath(filename);
+            YamlConfig = yaml.Deserializer<Config>();
+            if (YamlConfig != null)
             {
-                throw new FileNotFoundException();
+                foreach (GROUP G in YamlConfig.ProxyGroup)
+                {
+                    rulebox.Items.Add(G.name);
+                }
+                foreach (string r in YamlConfig.Rule)
+                {
+                    string[] z = r.Split(',');
+                    if (z.Length >= 3)
+                    {
+                        RuleList.Items.Add(new Rule_Struct(z[0], z[1], z[2]));
+                    }
+                    else
+                    {
+                        RuleList.Items.Add(new Rule_Struct(z[0], "剩余目标地址", z[1]));
+                    }
+                }
             }
-            StreamReader yamlReader = File.OpenText(_filepath);
-            Deserializer yamlDeserializer = new Deserializer();
-            T info = yamlDeserializer.Deserialize<T>(yamlReader);
-            yamlReader.Close();
-            return info;
+        }
+
+        private void Button_Click_1(object sender, RoutedEventArgs e)
+        {
+            var method = methodbox.SelectedItem.ToString().Replace("System.Windows.Controls.ComboBoxItem: ","");
+            var target = targetbox.Text;
+            var rule =rulebox.SelectedItem.ToString();
+            StringBuilder content = new StringBuilder(method);
+            content.Append(",").Append(target).Append(",").Append(rule);
+            var Rule = new[]
+            {
+                content.ToString()
+            };
+            yaml.Serializer<object>(Rule);
+            RuleList.Items.Add(new Rule_Struct(method, target, rule));
+            MessageBox.Show("策略添加成功，重载配置生效", "策略添加成功");
+        }
+
+        private void Button_Click_2(object sender, RoutedEventArgs e)
+        {
+            if (filename == null)
+            {
+                MessageBox.Show("请先加载配置", "警告");
+                return;
+            }
+            StringBuilder url = new StringBuilder("http://");
+            url.Append(YamlConfig.controller).Append("/configs");
+            Dictionary<string, string> dic = new Dictionary<string, string>();
+            dic.Add("path", filename);
+            string json = JsonConvert.SerializeObject(dic);
+            string code = HTTPAPI.HttpRequestPUT(url.ToString(), json).ToString();
+            if (code == "请求成功")
+            {
+                MessageBox.Show("重载配置完成", "成功");
+            }
+            else
+            {
+                MessageBox.Show(code, "失败");
+            }
         }
     }
+
 }

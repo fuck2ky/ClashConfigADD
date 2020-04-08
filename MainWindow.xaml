@@ -8,11 +8,25 @@
         Title="MainWindow" Height="473" Width="901">
     <Grid>
         <Button Content="加载配置文件" HorizontalAlignment="Left" Margin="60,95,0,0" VerticalAlignment="Top" Width="81" Height="30" Click="Button_Click"/>
-        <Button Content="重载配置" HorizontalAlignment="Left" Margin="60,181,0,0" VerticalAlignment="Top" Width="81" Height="30" RenderTransformOrigin="-0.08,0.474" />
-        <ComboBox HorizontalAlignment="Left" Margin="227,61,0,0" VerticalAlignment="Top" Width="120"/>
-        <ComboBox HorizontalAlignment="Left" Margin="571,61,0,0" VerticalAlignment="Top" Width="120"/>
-        <TextBox HorizontalAlignment="Left" Height="23" Margin="413,61,0,0" TextWrapping="Wrap" Text="TextBox" VerticalAlignment="Top" Width="120"/>
-        <Button Content="Button" HorizontalAlignment="Left" Margin="754,65,0,0" VerticalAlignment="Top" Width="75"/>
+        <Button Content="重载配置" HorizontalAlignment="Left" Margin="60,181,0,0" VerticalAlignment="Top" Width="81" Height="30" RenderTransformOrigin="-0.08,0.474" Click="Button_Click_2" />
+        <ComboBox x:Name="methodbox" HorizontalAlignment="Left" Margin="227,61,0,0" VerticalAlignment="Top" Width="146" IsReadOnly="True">
+            <ComboBoxItem Content="DOMAIN" HorizontalAlignment="Left" Width="118"/>
+            <ComboBoxItem Content="DOMAIN-SUFFIX" HorizontalAlignment="Left" Width="118"/>
+            <ComboBoxItem Content="DOMAIN-KEYWORD" HorizontalAlignment="Left" Width="118"/>
+            <ComboBoxItem Content="IP-CIDR" HorizontalAlignment="Left" Width="118"/>
+        </ComboBox>
+        <ComboBox x:Name="rulebox" HorizontalAlignment="Left" Margin="571,61,0,0" VerticalAlignment="Top" Width="133"/>
+        <TextBox x:Name="targetbox" HorizontalAlignment="Left" Height="23" Margin="401,61,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="153"/>
+        <Button Content="添加规则" HorizontalAlignment="Left" Margin="738,61,0,0" VerticalAlignment="Top" Width="75" Height="23" Click="Button_Click_1"/>
+        <ListView x:Name="RuleList" HorizontalAlignment="Center" Height="310" Margin="227,99,66,0" VerticalAlignment="Top" Width="600" SelectionMode="Single">
+            <ListView.View>
+                <GridView>
+                    <GridViewColumn Header="匹配方法" Width="130" DisplayMemberBinding="{Binding method}"/>
+                    <GridViewColumn Header="目标" Width="320" DisplayMemberBinding="{Binding target}"/>
+                    <GridViewColumn Header="策略集" Width="120" DisplayMemberBinding="{Binding rule}"/>
+                </GridView>
+            </ListView.View>
+        </ListView>
 
     </Grid>
 </Window>
