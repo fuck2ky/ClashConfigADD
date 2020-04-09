@@ -7,7 +7,7 @@
     <ProjectGuid>{0FE787A2-3B16-4FD4-B92F-D4B6559E49C1}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>ClashConfigADD</RootNamespace>
-    <AssemblyName>Clash策略添加工具</AssemblyName>
+    <AssemblyName>ClashConfigADD</AssemblyName>
     <TargetFrameworkVersion>v4.7.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
@@ -54,7 +54,7 @@
   </PropertyGroup>
   <PropertyGroup />
   <PropertyGroup>
-    <SignManifests>true</SignManifests>
+    <SignManifests>false</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestCertificateThumbprint>92B621584C6B1493B84C3C6EFA26A33B3EA2D55F</ManifestCertificateThumbprint>
@@ -63,7 +63,7 @@
     <ManifestKeyFile>ClashConfigADD_TemporaryKey.pfx</ManifestKeyFile>
   </PropertyGroup>
   <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>ClashConfigADD_TemporaryKey.pfx</AssemblyOriginatorKeyFile>
