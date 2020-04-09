@@ -1,4 +1,5 @@
-﻿using Microsoft.Win32;
+﻿using MaterialDesignThemes.Wpf;
+using Microsoft.Win32;
 using Newtonsoft.Json;
 using System.Collections.Generic;
 using System.IO;
@@ -102,6 +103,11 @@ namespace ClashConfigADD
 
         private void Button_Click_1(object sender, RoutedEventArgs e)
         {
+            if (methodbox.SelectedItem == null)
+            {
+                MessageTips("请先添加策略", sender, e);
+                return;
+            }
             var method = methodbox.SelectedItem.ToString().Replace("System.Windows.Controls.ComboBoxItem: ","");
             var target = targetbox.Text;
             var rule =rulebox.SelectedItem.ToString();
@@ -113,14 +119,15 @@ namespace ClashConfigADD
             };
             yaml.Serializer<object>(Rule);
             RuleList.Items.Add(new Rule_Struct(method, target, rule));
-            MessageBox.Show("策略添加成功，重载配置生效", "策略添加成功");
+            
+            MessageTips("策略添加成功，重载配置生效", sender, e);
         }
 
         private void Button_Click_2(object sender, RoutedEventArgs e)
         {
             if (filename == null)
             {
-                MessageBox.Show("请先加载配置", "警告");
+                MessageTips("请先加载配置",sender,e);
                 return;
             }
             StringBuilder url = new StringBuilder("http://");
@@ -131,12 +138,21 @@ namespace ClashConfigADD
             string code = HTTPAPI.HttpRequestPUT(url.ToString(), json).ToString();
             if (code == "请求成功")
             {
-                MessageBox.Show("重载配置完成", "成功");
+                MessageTips("重载配置完成", sender, e);
             }
             else
             {
-                MessageBox.Show(code, "失败");
+                MessageTips(code, sender, e);
             }
+        }
+        public async void MessageTips(string message, object sender, RoutedEventArgs e)
+        {
+            var sampleMessageDialog = new SimpleMessage
+
+            {
+                Message = { Text = message }
+            };
+            await DialogHost.Show(sampleMessageDialog, "RootDialog");
         }
     }
 

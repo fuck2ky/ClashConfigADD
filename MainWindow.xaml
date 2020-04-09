@@ -4,29 +4,48 @@
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ClashConfigADD"
+        xmlns:materialDesign="http://materialdesigninxaml.net/winfx/xaml/themes"
         mc:Ignorable="d"
-        Title="MainWindow" Height="473" Width="901">
-    <Grid>
-        <Button Content="加载配置文件" HorizontalAlignment="Left" Margin="60,95,0,0" VerticalAlignment="Top" Width="81" Height="30" Click="Button_Click"/>
-        <Button Content="重载配置" HorizontalAlignment="Left" Margin="60,181,0,0" VerticalAlignment="Top" Width="81" Height="30" RenderTransformOrigin="-0.08,0.474" Click="Button_Click_2" />
-        <ComboBox x:Name="methodbox" HorizontalAlignment="Left" Margin="227,61,0,0" VerticalAlignment="Top" Width="146" IsReadOnly="True">
-            <ComboBoxItem Content="DOMAIN" HorizontalAlignment="Left" Width="118"/>
-            <ComboBoxItem Content="DOMAIN-SUFFIX" HorizontalAlignment="Left" Width="118"/>
-            <ComboBoxItem Content="DOMAIN-KEYWORD" HorizontalAlignment="Left" Width="118"/>
-            <ComboBoxItem Content="IP-CIDR" HorizontalAlignment="Left" Width="118"/>
-        </ComboBox>
-        <ComboBox x:Name="rulebox" HorizontalAlignment="Left" Margin="571,61,0,0" VerticalAlignment="Top" Width="133"/>
-        <TextBox x:Name="targetbox" HorizontalAlignment="Left" Height="23" Margin="401,61,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="153"/>
-        <Button Content="添加规则" HorizontalAlignment="Left" Margin="738,61,0,0" VerticalAlignment="Top" Width="75" Height="23" Click="Button_Click_1"/>
-        <ListView x:Name="RuleList" HorizontalAlignment="Center" Height="310" Margin="227,99,66,0" VerticalAlignment="Top" Width="600" SelectionMode="Single">
-            <ListView.View>
-                <GridView>
-                    <GridViewColumn Header="匹配方法" Width="130" DisplayMemberBinding="{Binding method}"/>
-                    <GridViewColumn Header="目标" Width="320" DisplayMemberBinding="{Binding target}"/>
-                    <GridViewColumn Header="策略集" Width="120" DisplayMemberBinding="{Binding rule}"/>
-                </GridView>
-            </ListView.View>
-        </ListView>
+        Title="Clash策略添加工具" Height="473" Width="922" WindowStyle="ThreeDBorderWindow" WindowStartupLocation="CenterScreen" Icon="logo.png" ScrollViewer.VerticalScrollBarVisibility="Auto" ResizeMode="NoResize">
+    <Window.Resources>
 
-    </Grid>
+        <Style x:Key="OpenSans">
+            <Setter Property="TextElement.FontFamily" Value="Resources/#OpenSans"/>
+        </Style>
+        <Style x:Key="PingFang">
+            <Setter Property="TextElement.FontFamily" Value="Resources/#PingFang"/>
+        </Style>
+    </Window.Resources>
+    <materialDesign:DialogHost Identifier="RootDialog">
+        <Grid Margin="10,0,23,0">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="173*"/>
+                <ColumnDefinition Width="545*"/>
+                <ColumnDefinition Width="163*"/>
+            </Grid.ColumnDefinitions>
+            <Button Content="加载配置文件"  HorizontalAlignment="Left" Margin="25,95,0,0" VerticalAlignment="Top" Width="120" Height="50" Foreground="#ecf0f1"  Click="Button_Click" FontSize="14" FontWeight="Bold" />
+            <Button Content="重载配置文件"  HorizontalAlignment="Left" Margin="25,181,0,0" VerticalAlignment="Top" Width="120" Height="50"  Foreground="#ecf0f1"  Click="Button_Click_2" FontSize="14" FontWeight="Bold" >
+            </Button>
+            <ComboBox x:Name="methodbox"  Margin="33,52,0,0" VerticalAlignment="Top" Width="146" IsReadOnly="True" Height="30" Grid.Column="1" HorizontalAlignment="Left" >
+                <ComboBoxItem Content="DOMAIN" HorizontalAlignment="Center" Width="145" />
+                <ComboBoxItem Content="DOMAIN-SUFFIX" HorizontalAlignment="Center" Width="145" />
+                <ComboBoxItem Content="DOMAIN-KEYWORD" HorizontalAlignment="Center" Width="145"/>
+                <ComboBoxItem Content="IP-CIDR" HorizontalAlignment="Center" Width="145"  />
+            </ComboBox>
+            <ComboBox x:Name="rulebox" HorizontalAlignment="Left" Margin="389,52,0,0" VerticalAlignment="Top" Width="133" Height="30" Grid.Column="1"/>
+            <TextBox x:Name="targetbox"  HorizontalAlignment="Left" Height="30" Margin="209,52,0,0" TextWrapping="Wrap" VerticalAlignment="Top" Width="153" Grid.Column="1" TextAlignment="Center" FontSize="12" />
+            <Button Content="添加规则"  HorizontalAlignment="Left" Margin="541,52,0,0"  FontSize="14" FontWeight="Bold"  Foreground="#ecf0f1"  VerticalAlignment="Top" Width="92" Height="30" Click="Button_Click_1" Grid.Column="1" Grid.ColumnSpan="2">
+            </Button>
+
+            <ListView x:Name="RuleList" HorizontalAlignment="Center" Height="310" Margin="33,107,75,0" VerticalAlignment="Top" Width="600" SelectionMode="Single" Grid.Column="1" Grid.ColumnSpan="2">
+                <ListView.View>
+                    <GridView>
+                        <GridViewColumn Header="匹配方法" Width="130"  DisplayMemberBinding="{Binding method}"/>
+                        <GridViewColumn Header="目标" Width="310" DisplayMemberBinding="{Binding target}"/>
+                        <GridViewColumn Header="策略集" Width="120" DisplayMemberBinding="{Binding rule}"/>
+                    </GridView>
+                </ListView.View>
+            </ListView>
+        </Grid>
+    </materialDesign:DialogHost>
 </Window>
