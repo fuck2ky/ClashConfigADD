@@ -1,6 +1,7 @@
 ﻿using MaterialDesignThemes.Wpf;
 using Microsoft.Win32;
 using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -147,6 +148,15 @@ namespace ClashConfig
                 Message = { Text = message }
             };
             await DialogHost.Show(sampleMessageDialog, "RootDialog");
+        }
+
+        private void DeleteRule_Click(object sender, RoutedEventArgs e)
+        {
+            Rule_Struct Selected_Rule =(Rule_Struct) RuleList.SelectedItem;
+            StringBuilder content = new StringBuilder(Selected_Rule.method).Append(',').Append(Selected_Rule.target).Append(',').Append(Selected_Rule.rule);
+            tools.DeleteRule(YamlConfig, content.ToString());
+            RuleList.Items.Remove(RuleList.SelectedItem);
+            MessageTips("已移除选中策略,重载配置生效", sender, e);
         }
     }
 

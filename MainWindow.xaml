@@ -8,7 +8,9 @@
         mc:Ignorable="d"
         Title="Clash策略添加工具" Height="473" Width="922" WindowStyle="ThreeDBorderWindow" WindowStartupLocation="CenterScreen" Icon="logo.png" ScrollViewer.VerticalScrollBarVisibility="Auto" ResizeMode="NoResize">
     <Window.Resources>
-
+        <ContextMenu x:Key="ContextMenu">
+            <MenuItem Name="DeleteRule" Header="删除" Click="DeleteRule_Click"/>
+        </ContextMenu>
         <Style x:Key="OpenSans">
             <Setter Property="TextElement.FontFamily" Value="Resources/#OpenSans"/>
         </Style>
@@ -37,12 +39,30 @@
             <Button Content="添加规则"  HorizontalAlignment="Left" Margin="541,52,0,0"  FontSize="14" FontWeight="Bold"  Foreground="#ecf0f1"  VerticalAlignment="Top" Width="92" Height="30" Click="Button_Click_1" Grid.Column="1" Grid.ColumnSpan="2">
             </Button>
 
-            <ListView x:Name="RuleList" HorizontalAlignment="Center" Height="310" Margin="33,107,75,0" VerticalAlignment="Top" Width="600" SelectionMode="Single" Grid.Column="1" Grid.ColumnSpan="2">
+            <ListView x:Name="RuleList" HorizontalAlignment="Center" Height="301" Margin="20,107,67,0" VerticalAlignment="Top" Width="622" SelectionMode="Single" Grid.Column="1" Grid.ColumnSpan="2" ContextMenu="{StaticResource ContextMenu}" ScrollViewer.VerticalScrollBarVisibility="Auto">
                 <ListView.View>
                     <GridView>
-                        <GridViewColumn Header="匹配方法" Width="130"  DisplayMemberBinding="{Binding method}"/>
-                        <GridViewColumn Header="目标" Width="310" DisplayMemberBinding="{Binding target}"/>
-                        <GridViewColumn Header="策略集" Width="120" DisplayMemberBinding="{Binding rule}"/>
+                        <GridViewColumn Header="匹配方法" Width="130" x:Name="column1" HeaderContainerStyle="{StaticResource MaterialDesignToolButton}" >
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding method}" FontFamily="OpenSans" TextAlignment="Center" MinWidth="{Binding Path=ActualWidth,ElementName=column1}"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="目标" Width="310"  x:Name="column2" HeaderContainerStyle="{StaticResource MaterialDesignToolButton}">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding target}" FontFamily="OpenSans" TextAlignment="Center" MinWidth="{Binding Path=ActualWidth,ElementName=column2}"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
+                        <GridViewColumn Header="策略集" Width="120" x:Name="column3" HeaderContainerStyle="{StaticResource MaterialDesignToolButton}">
+                            <GridViewColumn.CellTemplate>
+                                <DataTemplate>
+                                    <TextBlock Text="{Binding rule}" FontFamily="OpenSans" TextAlignment="Center" MinWidth="{Binding Path=ActualWidth,ElementName=column3}"/>
+                                </DataTemplate>
+                            </GridViewColumn.CellTemplate>
+                        </GridViewColumn>
                     </GridView>
                 </ListView.View>
             </ListView>
