@@ -6,7 +6,7 @@ using System.IO;
 using System.Text;
 using System.Windows;
 
-namespace ClashConfigADD
+namespace ClashConfig
 {
     /// <summary>
     /// MainWindow.xaml 的交互逻辑
@@ -15,7 +15,7 @@ namespace ClashConfigADD
     {
         public static string filename;
         private static Config YamlConfig;
-        private static SerializeObject yaml;
+        private static ConfigTools tools;
         struct Rule_Struct
         {
             public string method { get; set; }
@@ -36,9 +36,8 @@ namespace ClashConfigADD
                 filename = Directory.GetCurrentDirectory() + @"\config.yaml";
                 if (File.Exists(filename))
                 {
-                    yaml = new SerializeObject();
-                    yaml.setFilePath(filename.Replace("\\", "/"));
-                    YamlConfig = yaml.Deserializer<Config>();
+                    tools = new ConfigTools(filename.Replace("\\", "/"));
+                    YamlConfig = tools.ReadConfig();
                     if (YamlConfig != null)
                     {
                         foreach (GROUP G in YamlConfig.ProxyGroup)
@@ -77,9 +76,8 @@ namespace ClashConfigADD
         }
         public void loadConfig()
         {
-            yaml = new SerializeObject();
-            yaml.setFilePath(filename);
-            YamlConfig = yaml.Deserializer<Config>();
+            tools = new ConfigTools(filename.Replace("\\", "/"));
+            YamlConfig = tools.ReadConfig();
             if (YamlConfig != null)
             {
                 foreach (GROUP G in YamlConfig.ProxyGroup)
@@ -113,11 +111,7 @@ namespace ClashConfigADD
             var rule =rulebox.SelectedItem.ToString();
             StringBuilder content = new StringBuilder(method);
             content.Append(",").Append(target).Append(",").Append(rule);
-            var Rule = new[]
-            {
-                content.ToString()
-            };
-            yaml.Serializer<object>(Rule);
+            tools.AddRule(YamlConfig, content.ToString());
             RuleList.Items.Add(new Rule_Struct(method, target, rule));
             
             MessageTips("策略添加成功，重载配置生效", sender, e);

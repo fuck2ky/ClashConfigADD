@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using YamlDotNet.Serialization;
 
-namespace ClashConfigADD
+namespace ClashConfig
 {
     class Config
     {
@@ -87,34 +87,251 @@ namespace ClashConfigADD
         public int interval { get; set; }
     }
     //读写Yaml文件类
-    class SerializeObject
+    class YamlTool
     {
-        public String _filepath = Directory.GetCurrentDirectory() + @"\config.yaml";
-
-        public void setFilePath(String Filepath)
+        public string _filepath;
+        public void setFilePath(string Filepath)
         {
             _filepath = Filepath;
         }
         // 追加写入Yaml文件
-        public void Serializer<T>(T obj)
+        public void Append<T>(T obj)
         {
             StreamWriter yamlWriter = File.AppendText(_filepath);
             Serializer yamlserialzer = new Serializer();
             yamlserialzer.Serialize(yamlWriter, obj);
             yamlWriter.Close();
         }
+        public void Change<T>(T obj)
+        {
+            File.Delete(_filepath);
+            StreamWriter yamlWriter = File.CreateText(_filepath);
+            Serializer yamlserialzer = new Serializer();
+            yamlserialzer.Serialize(yamlWriter, obj);
+            yamlWriter.Close();
+
+        }
         // 读取Yaml文件
-        public T Deserializer<T>()
+        public T Read<T>()
         {
             if (!File.Exists(_filepath))
             {
-                MessageBox.Show("未能加载配置文件！", "错误");
+                throw new FileNotFoundException();
             }
             StreamReader yamlReader = File.OpenText(_filepath);
             Deserializer yamlDeserializer = new Deserializer();
             T info = yamlDeserializer.Deserialize<T>(yamlReader);
             yamlReader.Close();
             return info;
+        }
+    }
+    class ConfigTools
+    {
+        /// <summary>
+        /// 定义yamltool实例
+        /// </summary>
+        private YamlTool yaml = null;
+        /// <summary>
+        /// 默认文件是同目录下的Profile目录中的config.yaml文件
+        /// </summary>
+        private string _filename = Directory.GetCurrentDirectory() + @"\Profile\config.yaml";
+        /// <summary>
+        /// 实例化对象
+        /// </summary>
+        /// <param name="filename">
+        /// 配置文件名
+        /// </param>
+        public ConfigTools(string filename)
+        {
+            _filename = filename;
+            yaml = new YamlTool();
+            yaml.setFilePath(_filename);
+
+        }
+        /// <summary>
+        /// 读取Config配置文件
+        /// </summary>
+        /// <returns>
+        /// 返回Config类型对象
+        /// </returns>
+        public Config ReadConfig()
+        {
+            return yaml.Read<Config>();
+        }
+        /// <summary>
+        /// 删除指定的规则
+        /// </summary>
+        /// <param name="config">
+        /// config对象
+        /// </param>
+        /// <param name="Rule">
+        /// string类型的规则
+        /// </param>
+        /// <returns>
+        /// 删除成功返回True，失败False
+        /// </returns>
+        public bool DeleteRule(Config config, string Rule)
+        {
+            try
+            {
+                config.Rule.Remove(Rule);
+                yaml.Change<Config>(config);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+        /// <summary>
+        /// 删除指定的网络节点
+        /// </summary>
+        /// <param name="config">
+        /// config对象
+        /// </param>
+        /// <param name="Nodename">
+        /// 节点名称
+        /// </param>
+        /// <returns>
+        /// 删除成功返回True，失败False
+        /// </returns>
+        public bool DeleteNode(Config config, string Nodename)
+        {
+            bool flag = true;
+            foreach (PROXY node in config.Proxy)
+            {
+                if (node.name == Nodename)
+                {
+                    config.Proxy.Remove(node);
+                    flag = false;
+                }
+            }
+            if (flag)
+            {
+                return false;
+            }
+            try
+            {
+                yaml.Change<Config>(config);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+        /// <summary>
+        /// 添加规则，将规则添加到倒数第三个
+        /// </summary>
+        /// <param name="config">
+        /// config对象
+        /// </param>
+        /// <param name="Rule">
+        /// string类型的规则
+        /// </param>
+        /// <returns>
+        /// 添加成功返回true，失败返回False
+        /// </returns>
+        public bool AddRule(Config config, string Rule)
+        {
+            try
+            {
+                int index = config.Rule.Count - 2;
+                config.Rule.Insert(index, Rule);
+                yaml.Change(config);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+        /// <summary>
+        /// 添加网络节点
+        /// </summary>
+        /// <param name="config">
+        /// config对象
+        /// </param>
+        /// <param name="Node">
+        /// PROXY类型对象
+        /// </param>
+        /// <returns></returns>
+        public bool AddNode(Config config, PROXY Node)
+        {
+            try
+            {
+                config.Proxy.Add(Node);
+                yaml.Change(config);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+        /// <summary>
+        /// 修改规则
+        /// </summary>
+        /// <param name="config"> config对象</param>
+        /// <param name="OldRule">旧规则</param>
+        /// <param name="newRule">新规则</param>
+        /// <returns>返回成功与否</returns>
+        public bool ChangeRule(Config config, string OldRule, string newRule)
+        {
+            try
+            {
+                config.Rule[config.Rule.IndexOf(OldRule)] = newRule;
+                yaml.Change(config);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+        /// <summary>
+        /// 修改节点信息
+        /// </summary>
+        /// <param name="config"> config对象</param>
+        /// <param name="Node">PROXY对象</param>
+        /// <returns>返回成功与否</returns>
+        public bool ChangeNode(Config config, PROXY Node)
+        {
+            try
+            {
+                foreach (PROXY N in config.Proxy)
+                {
+                    if (N.name == Node.name)
+                    {
+                        config.Proxy[config.Proxy.IndexOf(N)] = Node;
+                    }
+                }
+                yaml.Change(config);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
+        /// <summary>
+        /// 添加策略集
+        /// </summary>
+        /// <param name="config">config对象</param>
+        /// <param name="Group">策略集</param>
+        /// <returns>成功与否</returns>
+        public bool AddProxyGroup(Config config, GROUP Group)
+        {
+            try
+            {
+                config.ProxyGroup.Add(Group);
+                yaml.Change(config);
+                return true;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }
